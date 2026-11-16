@@ -3,7 +3,7 @@ setlocal
 cd /d "%~dp0"
 
 echo ============================================
-echo   SenseVoice IME - installer
+echo   HoldTalk - installer
 echo ============================================
 echo.
 

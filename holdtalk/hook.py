@@ -51,7 +51,7 @@ user32.GetMessageW.argtypes = [ctypes.POINTER(wintypes.MSG), wintypes.HWND, wint
 user32.mouse_event.argtypes = [wintypes.DWORD, wintypes.DWORD, wintypes.DWORD, wintypes.DWORD, ctypes.c_void_p]
 
 
-def acquire_single_instance(name: str = "Global\\SenseVoiceIME") -> Optional[int]:
+def acquire_single_instance(name: str = "Global\\HoldTalk") -> Optional[int]:
     """拿全局互斥量。返回句柄表示拿到；返回 None 表示已有实例在跑。"""
     handle = kernel32.CreateMutexW(None, False, name)
     if not handle:

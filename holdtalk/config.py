@@ -55,7 +55,7 @@ DEFAULTS: dict[str, Any] = {
     },
     "log": {
         "level": "info",
-        "file": "svime.log",
+        "file": "holdtalk.log",
         "max_bytes": 1048576,
     },
 }

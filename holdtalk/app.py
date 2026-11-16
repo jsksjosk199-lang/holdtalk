@@ -20,7 +20,7 @@ from .hotwords import load_corrector
 from .inject import beep, paste_text
 from .polish import clean_local, load_polisher
 
-log = logging.getLogger("svime")
+log = logging.getLogger("holdtalk")
 
 
 def setup_logging(cfg: dict) -> None:
@@ -38,7 +38,7 @@ def setup_logging(cfg: dict) -> None:
         sh.setFormatter(fmt)
         log.addHandler(sh)
 
-    log_file = cfg_mod.resolve(lc.get("file", "svime.log"))
+    log_file = cfg_mod.resolve(lc.get("file", "holdtalk.log"))
     try:
         fh = logging.handlers.RotatingFileHandler(
             log_file, maxBytes=int(lc.get("max_bytes", 1048576)),
@@ -214,7 +214,7 @@ class VoiceImeApp:
             return 3
 
         log.info("=" * 56)
-        log.info("  SenseVoice IME 启动")
+        log.info("  HoldTalk 启动")
         log.info(f"  长按中键 {self.cfg['trigger']['long_press_ms']}ms = 语音输入")
         log.info(f"  热词 {len(self.corrector.entries) if self.corrector else 0} 条 | "
                  f"润色 {'本地' if self.cfg['polish'].get('local_rules') else '关闭'}"

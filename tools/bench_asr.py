@@ -9,8 +9,8 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from svime.asr import SenseVoiceEngine, clean_text, is_meaningful, trim_silence
-from svime.audio import resample_to
+from holdtalk.asr import SenseVoiceEngine, clean_text, is_meaningful, trim_silence
+from holdtalk.audio import resample_to
 
 
 def read_wav(path: str) -> tuple[np.ndarray, int]:

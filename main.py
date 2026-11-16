@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""SenseVoice IME 命令行入口。
+"""HoldTalk 命令行入口。
 
     python main.py                 启动（长按鼠标中键说话）
     python main.py --devices       查看可用麦克风
@@ -15,7 +15,7 @@ import sys
 import time
 
 if sys.stdout is None or sys.stderr is None:  # pythonw 启动时没有控制台
-    _d = os.path.join(os.path.expanduser("~"), ".sensevoice-ime")
+    _d = os.path.join(os.path.expanduser("~"), ".holdtalk")
     os.makedirs(_d, exist_ok=True)
     if sys.stdout is None:
         sys.stdout = open(os.path.join(_d, "stdout.log"), "a", encoding="utf-8")
@@ -24,11 +24,11 @@ if sys.stdout is None or sys.stderr is None:  # pythonw 启动时没有控制台
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from svime import config as cfg_mod  # noqa: E402
-from svime.asr import SenseVoiceEngine, is_meaningful, trim_silence  # noqa: E402
-from svime.audio import Recorder, list_input_devices, resample_to  # noqa: E402
-from svime.hotwords import load_corrector  # noqa: E402
-from svime.polish import clean_local, load_polisher  # noqa: E402
+from holdtalk import config as cfg_mod  # noqa: E402
+from holdtalk.asr import SenseVoiceEngine, is_meaningful, trim_silence  # noqa: E402
+from holdtalk.audio import Recorder, list_input_devices, resample_to  # noqa: E402
+from holdtalk.hotwords import load_corrector  # noqa: E402
+from holdtalk.polish import clean_local, load_polisher  # noqa: E402
 
 
 def cmd_devices() -> int:
@@ -135,7 +135,7 @@ def cmd_file(path: str, config_path: str | None) -> int:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="SenseVoice IME —— 长按鼠标中键，本地离线语音输入")
+    ap = argparse.ArgumentParser(description="HoldTalk —— 长按鼠标中键，本地离线语音输入")
     ap.add_argument("--config", help="配置文件路径（默认项目根目录 config.json）")
     ap.add_argument("--devices", action="store_true", help="列出麦克风设备")
     ap.add_argument("--test", action="store_true", help="录 4 秒测试识别效果")
@@ -149,7 +149,7 @@ def main() -> int:
     if args.file:
         return cmd_file(args.file, args.config)
 
-    from svime.app import VoiceImeApp
+    from holdtalk.app import VoiceImeApp
     return VoiceImeApp(args.config).run()
 
 

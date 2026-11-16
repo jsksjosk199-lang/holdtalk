@@ -1,16 +1,16 @@
-# SenseVoice IME
+# HoldTalk
 
 > 长按鼠标中键说话，松开就落字。**全程本地离线**，不联网、不上传、不花钱。
 
 > **给 AI Agent**：一条命令部署，契约见 **[AGENT.md](AGENT.md)**。
 > ```bash
-> git clone https://github.com/jsksjosk199-lang/sensevoice-ime.git && cd sensevoice-ime && python bootstrap.py --json
+> git clone https://github.com/jsksjosk199-lang/holdtalk.git && cd holdtalk && python bootstrap.py --json
 > ```
 > 幂等、非交互、输出 JSON + 退出码，失败自带 `fix` 字段。重跑安全，不会覆盖已有配置。
 
 一个 Windows 上的语音输入小工具：按住鼠标中键 → 说话 → 松开，识别出的文字直接出现在你当前光标处。
-识别内核是阿里的 **SenseVoice Small**（通过 sherpa-onnx 跑 ONNX 量化模型，纯 CPU），后面接了一层
-**热词纠错** 和 **文本润色**。
+
+短按中键仍然是原来的中键功能（浏览器新标签、CAD 平移……一个都不少）。
 
 ```
 按住中键 350ms  →  嘟（开始录音）
@@ -18,11 +18,28 @@
 松开           →  嘟（停止）→ 识别 → 热词 → 润色 → 自动粘贴到光标处
 ```
 
-短按中键仍然是原来的中键功能（浏览器新标签、CAD 平移……一个都不少）。
+---
+
+## 识别内核署名（重要）
+
+**本项目的语音识别能力不是自研的。** 它来自阿里 **FunAudioLLM** 团队开源的 **SenseVoiceSmall** 模型：
+
+| 项 | 内容 |
+|---|---|
+| 模型 | **SenseVoiceSmall** |
+| 作者 / 来源 | 阿里 **FunAudioLLM**（上游仓库 [QwenAudio/SenseVoice](https://github.com/FunAudioLLM/SenseVoice)） |
+| 权重许可 | [FunASR Model Open Source License Agreement v1.1](https://github.com/modelscope/FunASR/blob/main/MODEL_LICENSE) |
+| 推理运行时 | [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx)（Apache-2.0） |
+
+本项目做的是**应用层集成**：鼠标钩子触发、录音、热词纠错、文本润色、光标注入、一键部署。
+项目名 `HoldTalk` 是应用名，**不代表对模型的任何主张**；模型名称 `SenseVoice` 予以保留并在此署名，
+以符合上述许可 **2.2 条「须标注来源与作者信息、保留相关模型名称」** 的要求。
+
+详细许可清单与商用条件见 **[NOTICE.md](NOTICE.md)**。
 
 ---
 
-## 为什么要自己做这个
+## 为什么不用 Win+H
 
 Windows 自带的语音听写（`Win+H`）能用，但有三个硬伤：
 
@@ -62,8 +79,8 @@ Windows 自带的语音听写（`Win+H`）能用，但有三个硬伤：
 **前提**：Windows 10/11 + Python 3.10 以上（安装时勾选 `Add python.exe to PATH`）。
 
 ```bat
-git clone https://github.com/jsksjosk199-lang/sensevoice-ime.git
-cd sensevoice-ime
+git clone https://github.com/jsksjosk199-lang/holdtalk.git
+cd holdtalk
 install.bat
 ```
 
@@ -192,7 +209,7 @@ python tools\setup_autostart.py
 ## 常见问题
 
 **长按没反应？**
-先看 `svime.log`。如果钩子没装上，八成是权限问题——用管理员身份跑一次 `start.bat`。
+先看 `holdtalk.log`。如果钩子没装上，八成是权限问题——用管理员身份跑一次 `start.bat`。
 另外确认没有第二个实例在跑（单实例锁会挡住第二个）。
 
 **录不到声音？**
@@ -231,7 +248,7 @@ python tools\setup_autostart.py
 ## 目录结构
 
 ```
-sensevoice-ime/
+holdtalk/
 ├── bootstrap.py            一键部署（幂等 / 非交互 / JSON，Agent 用这个）
 ├── AGENT.md                给 AI Agent 的部署与操作契约
 ├── main.py                 入口（服务 / --test / --devices / --file）
@@ -241,7 +258,7 @@ sensevoice-ime/
 ├── test.bat                录 4 秒试听
 ├── config.json             你的配置（含热词表）
 ├── NOTICE.md               第三方组件与许可清单
-├── svime/
+├── holdtalk/
 │   ├── asr.py              SenseVoice 引擎封装
 │   ├── audio.py            录音与重采样
 │   ├── hotwords.py         热词纠错（别名 + 拼音模糊）
@@ -261,24 +278,25 @@ sensevoice-ime/
 
 ## 依赖与许可
 
-本项目**自有代码**为 MIT（见 [LICENSE](LICENSE)）。
-
-**识别能力不是本项目原创**，来自第三方开源模型。完整的许可清单、商用条件与不确定点见
-**[NOTICE.md](NOTICE.md)**，一句话版本：
+本项目**自有代码**为 MIT（见 [LICENSE](LICENSE)）。完整许可清单与合规动作见 **[NOTICE.md](NOTICE.md)**。
 
 | 组件 | 许可 | 商用 |
 |---|---|---|
-| 本项目代码 | MIT | ✅ |
-| [SenseVoice](https://github.com/FunAudioLLM/SenseVoice) 模型 | 代码 MIT / 权重 FunASR Model License v1.1 | ✅ 允许，需遵守署名与模型名称条款 |
+| 本项目代码（HoldTalk） | MIT | ✅ |
+| [SenseVoiceSmall](https://github.com/FunAudioLLM/SenseVoice) 模型 | 代码 MIT / 权重 **FunASR Model License v1.1** | ✅ 允许，须署名并保留模型名 |
 | [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx)（推理运行时） | Apache-2.0 | ✅ |
 | [pypinyin](https://github.com/mozillazg/python-pinyin) | MIT | ✅ |
 | [sounddevice](https://github.com/spatialaudio/python-sounddevice) | MIT | ✅ |
+| [numpy](https://numpy.org/) | BSD-3-Clause | ✅ |
 
-⚠️ 两点需要你自己判断：
+**关于模型许可**（已核实，非推测）：
 
-1. 本仓库**不分发模型权重**（`models/` 在 `.gitignore` 里，靠脚本下载），避免构成权重再分发；
-2. 实际下载的是 sherpa-onnx 社区的 **ONNX 转换版，该仓库未声明独立许可证**，
-   上游也说明「第三方转换版需单独核对条款」。商用前建议用官方权重自行转换。
+- SenseVoice 上游**代码是 MIT，权重是 FunASR Model Open Source License v1.1**；
+- 该协议 **2.1 允许自由使用、修改、分享（含商用）**，第 3 条是责任免责而非非商用限制；
+- **2.2 条要求**：标注来源与作者、**保留模型名称** —— 本项目通过在 README 署名区块与本文件履行；
+- 本项目下载的 ONNX 转换版，其仓库根目录的 `LICENSE` 明确写「Ref to FunASR license」，
+  **许可链条闭合**，与官方权重同一套条款；
+- 本仓库**不分发模型权重**（`models/` 在 `.gitignore`，靠脚本下载），避免构成权重再分发。
 
-**本项目非官方项目**，与阿里 FunAudioLLM、QwenAudio、k2-fsa 无隶属或背书关系；
-名称中的 "SenseVoice" 仅用于说明所用内核。
+**非官方声明**：HoldTalk 与阿里巴巴集团、FunAudioLLM、QwenAudio、k2-fsa 均无隶属或背书关系。
+文档中出现这些名称，仅为许可要求的**技术来源署名**。

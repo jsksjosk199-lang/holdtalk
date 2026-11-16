@@ -44,7 +44,7 @@ def download(url: str, dest: str, expect: int = 0, proxy: str | None = None) -> 
         print(f"  已存在，跳过：{os.path.basename(dest)}")
         return
 
-    req = urllib.request.Request(url, headers={"User-Agent": "sensevoice-ime/1.0"})
+    req = urllib.request.Request(url, headers={"User-Agent": "holdtalk/1.0"})
     if proxy:
         handler = urllib.request.ProxyHandler({"http": proxy, "https": proxy})
         opener = urllib.request.build_opener(handler)

@@ -14,7 +14,7 @@ import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STARTUP = os.path.join(os.environ["APPDATA"], r"Microsoft\Windows\Start Menu\Programs\Startup")
-VBS = os.path.join(STARTUP, "SenseVoiceIME.vbs")
+VBS = os.path.join(STARTUP, "HoldTalk.vbs")
 
 VBS_TEMPLATE = '''Set sh = CreateObject("WScript.Shell")
 sh.CurrentDirectory = "{root}"

@@ -241,7 +241,7 @@ def ensure_config(quiet: bool) -> Step:
 def register_autostart(quiet: bool) -> Step:
     startup = os.path.join(os.environ.get("APPDATA", ""),
                            r"Microsoft\Windows\Start Menu\Programs\Startup")
-    vbs = os.path.join(startup, "SenseVoiceIME.vbs")
+    vbs = os.path.join(startup, "HoldTalk.vbs")
     try:
         os.makedirs(startup, exist_ok=True)
         pyw = os.path.join(os.path.dirname(sys.executable), "pythonw.exe")
@@ -265,8 +265,8 @@ def selftest(index: int | None, quiet: bool) -> Step:
     """真实跑一遍：加载模型 + 开麦 + 识别一段静音，确认链路通。"""
     sys.path.insert(0, ROOT)
     try:
-        from svime.asr import SenseVoiceEngine
-        from svime.audio import Recorder, list_input_devices
+        from holdtalk.asr import SenseVoiceEngine
+        from holdtalk.audio import Recorder, list_input_devices
     except Exception as exc:
         return Step("selftest", False, f"导入失败: {exc}", "检查依赖是否装全")
 
@@ -318,7 +318,7 @@ def is_running() -> tuple[bool, int]:
     try:
         import ctypes
         k32 = ctypes.WinDLL("kernel32", use_last_error=True)
-        h = k32.CreateMutexW(None, False, "Global\\SenseVoiceIME")
+        h = k32.CreateMutexW(None, False, "Global\\HoldTalk")
         if not h:
             return False, 0
         already = ctypes.get_last_error() == 183
@@ -349,7 +349,7 @@ def start_service(quiet: bool) -> Step:
 
     # 等它把模型加载完、钩子装上
     deadline = time.time() + 25
-    log_path = os.path.join(ROOT, "svime.log")
+    log_path = os.path.join(ROOT, "holdtalk.log")
     while time.time() < deadline:
         time.sleep(1)
         ok, _ = is_running()
@@ -361,12 +361,12 @@ def start_service(quiet: bool) -> Step:
         with open(log_path, encoding="utf-8", errors="ignore") as f:
             tail = " | ".join(f.read().strip().splitlines()[-3:])[:300]
     return Step("service", False, f"启动后 25s 内未就绪 {tail}",
-                "看 svime.log；若提示钩子失败，用管理员身份跑 start.bat")
+                "看 holdtalk.log；若提示钩子失败，用管理员身份跑 start.bat")
 
 
 # ---------------------------------------------------------------- 主流程
 def main() -> int:
-    ap = argparse.ArgumentParser(description="SenseVoice IME 一键部署（Agent 友好）")
+    ap = argparse.ArgumentParser(description="HoldTalk 一键部署（Agent 友好）")
     ap.add_argument("--json", action="store_true", help="只输出 JSON")
     ap.add_argument("--check", action="store_true", help="只体检，不做任何修改")
     ap.add_argument("--no-start", action="store_true", help="不启动服务")
@@ -380,7 +380,8 @@ def main() -> int:
     t0 = time.time()
 
     say("=" * 58, quiet)
-    say(f"  SenseVoice IME · 一键部署 v{VERSION}", quiet)
+    say(f"  HoldTalk · 一键部署 v{VERSION}", quiet)
+    say("  识别内核 SenseVoiceSmall (FunAudioLLM) / FunASR Model License v1.1", quiet)
     say(f"  目录 {ROOT}", quiet)
     say("=" * 58, quiet)
 
@@ -439,6 +440,9 @@ def finish(steps: list[Step], quiet: bool, t0: float, code: int,
             "version": VERSION,
             "root": ROOT,
             "elapsed_s": round(elapsed, 1),
+            "attribution": ("识别内核 SenseVoiceSmall (Alibaba FunAudioLLM), "
+                            "FunASR Model Open Source License v1.1. "
+                            "HoldTalk 仅做应用层集成，非模型作者。"),
             "steps": [s.to_dict() for s in steps],
             "warnings": [{"step": s.name, "detail": s.detail, "advice": s.fix} for s in warn],
             "next": ("长按鼠标中键说话，松开自动落字。" if started and ok
