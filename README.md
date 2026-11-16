@@ -56,7 +56,7 @@ Windows 自带的语音听写（`Win+H`）能用，但有三个硬伤：
 **前提**：Windows 10/11 + Python 3.10 以上（安装时勾选 `Add python.exe to PATH`）。
 
 ```bat
-git clone <this-repo>
+git clone https://github.com/jsksjosk199-lang/sensevoice-ime.git
 cd sensevoice-ime
 install.bat
 ```

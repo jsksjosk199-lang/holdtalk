@@ -15,6 +15,10 @@ __pycache__/
 # 本地配置（含热词，属个人数据）
 config.json
 
+# 本地调试脚本（不属于项目本体）
+tools/_*.py
+tools/bridge.py
+
 # 系统
 Thumbs.db
 desktop.ini
