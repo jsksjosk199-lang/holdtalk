@@ -1,0 +1,55 @@
+{
+  "asr": {
+    "model_dir": "models/sensevoice",
+    "num_threads": 2,
+    "language": "zh",
+    "use_itn": true,
+    "warmup": true
+  },
+  "trigger": {
+    "long_press_ms": 350,
+    "min_speech_ms": 250,
+    "max_record_seconds": 60,
+    "restore_middle_click": true,
+    "beep": true
+  },
+  "audio": {
+    "device": null,
+    "sample_rate": 16000
+  },
+  "hotwords": {
+    "enabled": true,
+    "fuzzy": true,
+    "list": [
+      { "word": "WorkBuddy", "aliases": ["work body", "work buddy", "我的body"] },
+      { "word": "Claude Code", "aliases": ["cloud code", "克劳德 code"] },
+      { "word": "ChatGPT", "aliases": ["chat gpt", "恰特 gpt"] },
+      { "word": "Kubernetes", "aliases": ["cube netties", "库伯内提斯"] },
+      { "word": "豆包", "aliases": ["斗包", "豆宝"] },
+      { "word": "提示词", "aliases": ["提示辞"] },
+      { "word": "大模型", "aliases": ["大模形"] }
+    ]
+  },
+  "polish": {
+    "local_rules": true,
+    "llm": {
+      "enabled": false,
+      "base_url": "https://api.deepseek.com/v1",
+      "model": "deepseek-chat",
+      "api_key_env": "SENSEVOICE_IME_API_KEY",
+      "timeout": 25,
+      "temperature": 0.2,
+      "headers": {}
+    }
+  },
+  "inject": {
+    "method": "clipboard",
+    "vim_mode": false,
+    "restore_clipboard": true
+  },
+  "log": {
+    "level": "info",
+    "file": "svime.log",
+    "max_bytes": 1048576
+  }
+}

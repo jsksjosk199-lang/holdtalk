@@ -1,0 +1,21 @@
+# 模型文件（用 download_model.py 下载，不入库）
+models/
+*.onnx
+*.part
+
+# 运行时产物
+svime.log*
+*.pyc
+__pycache__/
+.pytest_cache/
+
+# 测试音频
+*.wav
+
+# 本地配置（含热词，属个人数据）
+config.json
+
+# 系统
+Thumbs.db
+desktop.ini
+.DS_Store
