@@ -15,31 +15,17 @@ if errorlevel 1 (
   exit /b 1
 )
 
-echo [1/3] Installing dependencies ...
-python -m pip install -r requirements.txt
-if errorlevel 1 goto :fail
+python bootstrap.py
+set RC=%ERRORLEVEL%
 
 echo.
-echo [2/3] Downloading model ^(~230 MB^) ...
-python download_model.py
-if errorlevel 1 goto :fail
-
+if not "%RC%"=="0" (
+  echo [FAILED] exit code %RC% - see the message above.
+) else (
+  echo  Done. Hold the middle mouse button and speak.
+)
 echo.
-echo [3/3] Checking audio input devices ...
-python main.py --devices
-
-echo.
-echo --------------------------------------------
-echo Done.
-echo   start.bat  - run in background (no console)
-echo   test.bat   - record 4 seconds and show result
-echo   tools\setup_autostart.py  - start with Windows
-echo --------------------------------------------
+echo   start.bat  - run in background ^(no console^)
+echo   test.bat   - record 4 seconds and show the result
 pause
-exit /b 0
-
-:fail
-echo.
-echo [FAILED] See messages above.
-pause
-exit /b 1
+exit /b %RC%

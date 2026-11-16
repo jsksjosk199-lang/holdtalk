@@ -2,6 +2,12 @@
 
 > 长按鼠标中键说话，松开就落字。**全程本地离线**，不联网、不上传、不花钱。
 
+> **给 AI Agent**：一条命令部署，契约见 **[AGENT.md](AGENT.md)**。
+> ```bash
+> git clone https://github.com/jsksjosk199-lang/sensevoice-ime.git && cd sensevoice-ime && python bootstrap.py --json
+> ```
+> 幂等、非交互、输出 JSON + 退出码，失败自带 `fix` 字段。重跑安全，不会覆盖已有配置。
+
 一个 Windows 上的语音输入小工具：按住鼠标中键 → 说话 → 松开，识别出的文字直接出现在你当前光标处。
 识别内核是阿里的 **SenseVoice Small**（通过 sherpa-onnx 跑 ONNX 量化模型，纯 CPU），后面接了一层
 **热词纠错** 和 **文本润色**。
@@ -226,12 +232,15 @@ python tools\setup_autostart.py
 
 ```
 sensevoice-ime/
+├── bootstrap.py            一键部署（幂等 / 非交互 / JSON，Agent 用这个）
+├── AGENT.md                给 AI Agent 的部署与操作契约
 ├── main.py                 入口（服务 / --test / --devices / --file）
 ├── download_model.py       模型下载（支持代理和镜像）
-├── install.bat             一键装依赖 + 下模型
+├── install.bat             双击安装（内部就是调 bootstrap.py）
 ├── start.bat               后台启动
 ├── test.bat                录 4 秒试听
 ├── config.json             你的配置（含热词表）
+├── NOTICE.md               第三方组件与许可清单
 ├── svime/
 │   ├── asr.py              SenseVoice 引擎封装
 │   ├── audio.py            录音与重采样
@@ -252,8 +261,24 @@ sensevoice-ime/
 
 ## 依赖与许可
 
-- 识别模型：[SenseVoice](https://github.com/FunAudioLLM/SenseVoice)（阿里 FunAudioLLM），MIT
-- 推理运行时：[sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx)（k2-fsa），Apache-2.0
-- 拼音：[pypinyin](https://github.com/mozillazg/python-pinyin)，MIT
-- 录音：[sounddevice](https://github.com/spatialaudio/python-sounddevice)，MIT
-- 本项目代码：MIT，见 [LICENSE](LICENSE)
+本项目**自有代码**为 MIT（见 [LICENSE](LICENSE)）。
+
+**识别能力不是本项目原创**，来自第三方开源模型。完整的许可清单、商用条件与不确定点见
+**[NOTICE.md](NOTICE.md)**，一句话版本：
+
+| 组件 | 许可 | 商用 |
+|---|---|---|
+| 本项目代码 | MIT | ✅ |
+| [SenseVoice](https://github.com/FunAudioLLM/SenseVoice) 模型 | 代码 MIT / 权重 FunASR Model License v1.1 | ✅ 允许，需遵守署名与模型名称条款 |
+| [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx)（推理运行时） | Apache-2.0 | ✅ |
+| [pypinyin](https://github.com/mozillazg/python-pinyin) | MIT | ✅ |
+| [sounddevice](https://github.com/spatialaudio/python-sounddevice) | MIT | ✅ |
+
+⚠️ 两点需要你自己判断：
+
+1. 本仓库**不分发模型权重**（`models/` 在 `.gitignore` 里，靠脚本下载），避免构成权重再分发；
+2. 实际下载的是 sherpa-onnx 社区的 **ONNX 转换版，该仓库未声明独立许可证**，
+   上游也说明「第三方转换版需单独核对条款」。商用前建议用官方权重自行转换。
+
+**本项目非官方项目**，与阿里 FunAudioLLM、QwenAudio、k2-fsa 无隶属或背书关系；
+名称中的 "SenseVoice" 仅用于说明所用内核。
