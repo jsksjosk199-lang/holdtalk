@@ -198,7 +198,7 @@ def ensure_model(proxy: str | None, quiet: bool) -> Step:
         for name in missing:
             download_model.download(download_model.MIRRORS["hf-mirror"] + name,
                                     os.path.join(MODEL_DIR, name),
-                                    dict((n, s) for n, s in need)[name], proxy)
+                                    need[name], proxy)
     except Exception as exc:
         return Step("model", False, str(exc)[:300],
                     "换源重试：python download_model.py --source hf --proxy <你的代理>")
@@ -425,7 +425,7 @@ def main() -> int:
         if not st.ok:
             return finish(steps, quiet, t0, 6)
 
-    return finish(steps, quiet, t0, 0)
+    return finish(steps, quiet, t0, 0, started=not args.no_start)
 
 
 def finish(steps: list[Step], quiet: bool, t0: float, code: int,
@@ -442,7 +442,8 @@ def finish(steps: list[Step], quiet: bool, t0: float, code: int,
             "steps": [s.to_dict() for s in steps],
             "warnings": [{"step": s.name, "detail": s.detail, "advice": s.fix} for s in warn],
             "next": ("长按鼠标中键说话，松开自动落字。" if started and ok
-                     else ("体检完成，未做任何修改。" if ok else "按 failed 步的 fix 字段处理后重跑本命令")),
+                     else ("未启动服务；要真正用起来请运行 python bootstrap.py"
+                           if ok else "按 failed 步的 fix 字段处理后重跑本命令")),
         }
         failed = [s for s in steps if not s.ok]
         if failed:
@@ -461,7 +462,7 @@ def finish(steps: list[Step], quiet: bool, t0: float, code: int,
                 print("\n  现在长按鼠标中键说一句话，松开就会把文字打到光标处。")
                 print("  先确认手感：双击 test.bat 录 4 秒看识别效果。")
             else:
-                print("\n  （只体检，没有启动服务。要真正用起来：python bootstrap.py）")
+                print("\n  （没启动服务。要真正用起来：python bootstrap.py）")
             for s in warn:
                 print(f"  ⚠ {s.name}: {s.fix}")
         else:
